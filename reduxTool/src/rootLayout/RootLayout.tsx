@@ -1,6 +1,5 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
-import NavBar from "../navBar/NavBar";
+import { Outlet } from 'react-router-dom'
+import NavBar from '../navBar/NavBar'
 
 const RootLayout: React.FC = () => {
   return (
@@ -9,6 +8,6 @@ const RootLayout: React.FC = () => {
       <h1>Root Layout</h1>
       <Outlet />
     </>
-  );
-};
-export default RootLayout;
+  )
+}
+export default RootLayout

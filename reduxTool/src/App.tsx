@@ -1,45 +1,44 @@
-import React from "react";
-import "./App.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import './App.css'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 // layout
-import RootLayout from "./rootLayout/RootLayout";
+import RootLayout from './rootLayout/RootLayout'
 
 // error
-import WrongPage from "./wrongPage/WrongPage";
+import WrongPage from './wrongPage/WrongPage'
 
 // pages
-import MainPage from "./pages/mainPage/MainPage";
-import MyPage from "./pages/myPage/MyPage";
-import LoginPage from "./pages/loginPage/LoginPage";
-import SignupPage from "./pages/signupPage/SignupPage";
-import PontListPage from "./pages/pontListPage/PontListPage";
-import ProductPage from "./pages/productPage/ProductPage";
-import QuestionPage from "./pages/questionPage/QuestionPage";
+import MainPage from './pages/mainPage/MainPage'
+import MyPage from './pages/myPage/MyPage'
+import LoginPage from './pages/loginPage/LoginPage'
+import SignupPage from './pages/signupPage/SignupPage'
+import PontListPage from './pages/pontListPage/PontListPage'
+import ProductPage from './pages/productPage/ProductPage'
+import QuestionPage from './pages/questionPage/QuestionPage'
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <RootLayout />,
     errorElement: <WrongPage />,
     children: [
-      { path: "/", element: <MainPage /> },
-      { path: "/myPage", element: <MyPage /> },
-      { path: "/login", element: <LoginPage /> },
-      { path: "/signUp", element: <SignupPage /> },
-      { path: "/pontList", element: <PontListPage /> },
-      { path: "/product", element: <ProductPage /> },
-      { path: "/question", element: <QuestionPage /> },
-    ],
-  },
-]);
+      { path: '/', element: <MainPage /> },
+      { path: '/myPage', element: <MyPage /> },
+      { path: '/login', element: <LoginPage /> },
+      { path: '/signUp', element: <SignupPage /> },
+      { path: '/pontList', element: <PontListPage /> },
+      { path: '/product', element: <ProductPage /> },
+      { path: '/question', element: <QuestionPage /> }
+    ]
+  }
+])
 
-function App() {
+const App: React.FC = () => {
   return (
     <>
       <RouterProvider router={router} />
     </>
-  );
+  )
 }
 
-export default App;
+export default App
