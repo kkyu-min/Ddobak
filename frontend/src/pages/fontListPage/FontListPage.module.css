@@ -104,6 +104,24 @@
   margin: 5px; /* 항목 사이의 마진 */
 }
 
+@media (max-width: 1200px) {
+  .fontBoxContainer > * {
+    flex-basis: calc(50% - 10px);
+  }
+}
+
+@media (max-width: 800px) {
+  .fontBoxContainer > * {
+    flex-basis: calc(50% - 10px);
+  }
+}
+
+@media (max-width: 600px) {
+  .fontBoxContainer > * {
+    flex-basis: 90%;
+  }
+}
+
 /* 페이지네이션 */
 .paginationContainer {
   display: flex;
