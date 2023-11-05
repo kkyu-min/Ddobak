@@ -62,5 +62,7 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.x.x",
     "@types/axios": "^0.14.0",
     "prettier": "^3.0.3"
-  }
+  },
+  "proxy": "http://localhost:7000/"
+
 }
