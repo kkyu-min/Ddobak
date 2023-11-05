@@ -150,7 +150,7 @@ const FontMakeStep2: React.FC = () => {
       try {
         const formData = new FormData();
         console.log(koreanFiles[0].src)
-        formData.append('kor_file', koreanFiles[0].src);
+        formData.append('kor_file', koreanFiles[0]);
         formData.append('eng_file', englishFiles[0].src);
         // 이미지 처리 API 호출
         // const response = await axios.post('https://ddobak.com/api/v1/font/sort', formData, {
