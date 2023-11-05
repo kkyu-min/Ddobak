@@ -63,9 +63,8 @@
 }
 
 .pdfPreview {
-  margin: 20px 0 0 30px;
-  height: 280px;
-  object-fit: cover;
+  margin: 20px 0 0 20px;
+  /* object-fit: cover; */
 }
 
 .deleteIcon {

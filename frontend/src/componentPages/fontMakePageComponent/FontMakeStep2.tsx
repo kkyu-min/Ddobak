@@ -4,6 +4,7 @@ import UploadFile from './fontDetailPageAssets/upload_file.png';
 import { FaRegTimesCircle } from 'react-icons/fa';
 import { resultModalActions } from 'store/resultModalSlice';
 import { useDispatch } from 'react-redux';
+import AlertCustomModal from 'common/modals/alertCustomModal/AlertCustomModal';
 import axios from 'axios';
 
 const FontMakeStep2: React.FC = () => {
@@ -12,6 +13,12 @@ const FontMakeStep2: React.FC = () => {
 
   const koreanFileInputRef = useRef<HTMLInputElement>(null);
   const englishFileInputRef = useRef<HTMLInputElement>(null);
+
+  const [showAlertModal, setShowAlertModal] = useState(false);
+
+  const handleInvalidFileType = () => {
+    setShowAlertModal(true); // 
+  };
 
   // 파일 형식 검증 함수
   const isValidFileType = (file: File) => {
@@ -30,7 +37,7 @@ const FontMakeStep2: React.FC = () => {
           setKoreanFiles([{ src: reader.result as string, name: file.name }]);
         };
       } else {
-        alert('허용되지 않는 형식의 파일입니다. png, pdf, jpg 파일로 업로드해주세요.');
+        handleInvalidFileType();
       }
     }
   };
@@ -46,7 +53,7 @@ const FontMakeStep2: React.FC = () => {
           setEnglishFiles([{ src: reader.result as string, name: file.name }]);
         };
       } else {
-        alert('허용되지 않는 형식의 파일입니다. pdf, jpg, png 파일로 업로드해주세요.');
+        handleInvalidFileType();
       }
     }
   };
@@ -73,7 +80,7 @@ const FontMakeStep2: React.FC = () => {
         };
         reader.readAsDataURL(file);
       } else {
-        alert('허용되지 않는 형식의 파일입니다. pdf, jpg, png 파일로 업로드해주세요.');
+        handleInvalidFileType();
       }
     }
   };
@@ -111,7 +118,6 @@ const FontMakeStep2: React.FC = () => {
     if (
       fileExtension === 'jpg' ||
       fileExtension === 'png' ||
-      fileExtension === 'gif' ||
       fileExtension === 'jpeg'
     ) {
       return <img src={file.src} alt={file.name} className={classes.filePreview} />;
@@ -120,11 +126,7 @@ const FontMakeStep2: React.FC = () => {
     else if (fileExtension === 'pdf') {
       return (
         <div className={classes.pdfPreview}>
-          <object data={file.src} type="application/pdf" width="80%" height="200px">
-            <p>
-              PDF 파일을 표시할 수 없습니다. <a href={file.src}>여기</a>를 클릭하여 파일을
-              다운로드하세요.
-            </p>
+          <object data={file.src} type="application/pdf" height="210">
           </object>
         </div>
       );
@@ -146,45 +148,43 @@ const FontMakeStep2: React.FC = () => {
     if (koreanFiles.length > 0 && englishFiles.length > 0) {
       try {
         const formData = new FormData();
-        formData.append('multpartFile', koreanFiles[0].src); // 혹은 englishFiles[0].src
-        formData.append('multpartFile', englishFiles[0].src); // 혹은 englishFiles[0].src
-
+        formData.append('kor_file', koreanFiles[0].src);
+        formData.append('eng_file', englishFiles[0].src);
         // 이미지 처리 API 호출
-        const response = await axios.post('/api/image/straighten', formData, {
+        const response = await axios.post('https://ddobak.com/api/v1/font/sort', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         });
 
-        // 성공적으로 처리되었다면, 결과 이미지 URL을 파싱하여 상태 업데이트
-        if (response.data.success) {
-          // 이미지 URL을 `$` 기준으로 파싱
-          const imageUrls = response.data.body.split('$').filter((url: string) => url.trim() !== '');
+       // 성공적으로 처리되었다면, 결과 이미지 URL을 파싱하여 상태 업데이트
+       if (response.data.success) {
+        // 이미지 URL을 `$` 기준으로 파싱
+        const imageUrls = response.data.body.split('$').filter((url: string) => url.trim() !== '');
 
-          // 예를 들어 첫 번째 이미지로 한국어 파일 미리보기 업데이트
-          if (imageUrls.length > 0) {
-            setKoreanFiles([{ ...koreanFiles[0], src: imageUrls[0] }]);
-            // 여기서 createFilePreview 함수를 호출하여 미리보기 생성 가능
-            createFilePreview({ src: imageUrls[0], name: 'kor_file.png' }); // 파일 이름은 예시임
-          }
-
-          // 만약 영어 파일 미리보기도 업데이트 해야 한다면, 두 번째 URL을 사용
-          if (imageUrls.length > 1) {
-            setEnglishFiles([{ ...englishFiles[0], src: imageUrls[1] }]);
-
-            createFilePreview({ src: imageUrls[0], name: 'eng_file.png' }); // 파일 이름은 예시임
-          }
-
-          setIsImageStraightened(true);
-        } else {
-          alert('이미지를 처리하는데 실패했다.');
+        // 예를 들어 첫 번째 이미지로 한국어 파일 미리보기 업데이트
+        if (imageUrls.length > 0) {
+          setKoreanFiles([{ ...koreanFiles[0], src: imageUrls[0] }]);
+          // 여기서 createFilePreview 함수를 호출하여 미리보기 생성 가능
+          createFilePreview({ src: imageUrls[0], name: 'kor_file.png' }); // 파일 이름은 예시임
         }
-      } catch (error) {
-        console.error('이미지 처리 중 오류가 발생했다:', error);
-        alert('이미지를 처리하는 중 오류가 발생했다.');
+
+        // 만약 영어 파일 미리보기도 업데이트 해야 한다면, 두 번째 URL을 사용
+        if (imageUrls.length > 1) {
+          setEnglishFiles([{ ...englishFiles[0], src: imageUrls[1] }]);
+
+          createFilePreview({ src: imageUrls[1], name: 'eng_file.png' }); // 파일 이름은 예시임
+        }
+
+        setIsImageStraightened(true);
+      } else {
+        alert('이미지를 처리하는데 실패했다.');
       }
+    } catch (error) {
+      console.error('이미지 처리 중 오류가 발생했다:', error);
     }
-  };
+  }
+};
   // 미리보기 모달 가져오기
   const dispatch = useDispatch();
   const showPreviewHandler = () => {
@@ -300,6 +300,13 @@ const FontMakeStep2: React.FC = () => {
           </button>
         ) : null}
       </div>
+      <AlertCustomModal
+        show={showAlertModal}
+        onHide={() => setShowAlertModal(false)}
+        message1="허용되지 않는 형식의 파일입니다."
+        message2="pdf, jpg, png 파일로 업로드해주세요."
+        btnName="확인"
+      />
     </>
   )
 }
