@@ -4,6 +4,7 @@ import UploadFile from './fontDetailPageAssets/upload_file.png';
 import { FaRegTimesCircle } from 'react-icons/fa';
 import { resultModalActions } from 'store/resultModalSlice';
 import { useDispatch } from 'react-redux';
+import AlertCustomModal from 'common/modals/alertCustomModal/AlertCustomModal';
 
 const FontMakeStep2: React.FC = () => {
   const [koreanFiles, setKoreanFiles] = useState<{ src: string; name: string }[]>([]);
@@ -11,6 +12,12 @@ const FontMakeStep2: React.FC = () => {
 
   const koreanFileInputRef = useRef<HTMLInputElement>(null);
   const englishFileInputRef = useRef<HTMLInputElement>(null);
+
+  const [showAlertModal, setShowAlertModal] = useState(false);
+
+  const handleInvalidFileType = () => {
+    setShowAlertModal(true); // 
+  };
 
   // 파일 형식 검증 함수
   const isValidFileType = (file: File) => {
@@ -29,7 +36,7 @@ const FontMakeStep2: React.FC = () => {
           setKoreanFiles([{ src: reader.result as string, name: file.name }]);
         };
       } else {
-        alert('허용되지 않는 형식의 파일입니다. png, pdf, jpg 파일로 업로드해주세요.');
+        handleInvalidFileType();
       }
     }
   };
@@ -45,7 +52,7 @@ const FontMakeStep2: React.FC = () => {
           setEnglishFiles([{ src: reader.result as string, name: file.name }]);
         };
       } else {
-        alert('허용되지 않는 형식의 파일입니다. pdf, jpg, png 파일로 업로드해주세요.');
+        handleInvalidFileType();
       }
     }
   };
@@ -72,7 +79,7 @@ const FontMakeStep2: React.FC = () => {
         };
         reader.readAsDataURL(file);
       } else {
-        alert('허용되지 않는 형식의 파일입니다. pdf, jpg, png 파일로 업로드해주세요.');
+        handleInvalidFileType();
       }
     }
   };
@@ -261,6 +268,13 @@ const FontMakeStep2: React.FC = () => {
           </button>
         ) : null}
       </div>
+      <AlertCustomModal 
+        show={showAlertModal} 
+        onHide={() => setShowAlertModal(false)}
+        message1="허용되지 않는 형식의 파일입니다."
+        message2="pdf, jpg, png 파일로 업로드해주세요."
+        btnName="확인"
+      />
     </>
   );
 };
