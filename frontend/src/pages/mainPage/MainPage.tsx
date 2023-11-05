@@ -9,12 +9,16 @@ import {
   MainFooterBetweenInnerBox,
 } from './mainPageComponents/MainPageComponents';
 import MainPageMiniManuscript from './mainPageComponents/MainPageMiniManuscript';
+import MainPageFontList from './mainPageComponents/MainPageFontList';
+import MainPageLargeManuscript from './mainPageComponents/MainPageLargeManuscript';
+import MainPageGuide from './mainPageComponents/MainPageGuide';
+
 const MainPage: React.FC = () => {
   return (
     <main className={classes.container}>
-      <MainLargePage></MainLargePage>
-      <MainLargePage></MainLargePage>
-      <MainLargePage></MainLargePage>
+      <MainLargePage><MainPageLargeManuscript /></MainLargePage>
+      <MainLargePage><MainPageFontList /></MainLargePage>
+      {/* <MainLargePage><MainPageGuide /></MainLargePage> */}
       <MainFooter>
         <MainFooterBetween>
           <MainFooterBetweenInnerBox>

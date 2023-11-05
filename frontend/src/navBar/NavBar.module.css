@@ -44,15 +44,9 @@
   color: #D71718;
 }
 .list a.active {
-<<<<<<< HEAD
-  color: #D71718;
-  height: 68px;
-  border-bottom: 4px solid #D71718;
-=======
   color: #d71718;
   height: 67px;
   border-bottom: 4px solid #d71718;
->>>>>>> b971c589a435c2c78b9efb464fb2383f1019f8e5
 }
 
 .rightBox {
@@ -93,9 +87,6 @@
   justify-content: center;
   align-items: center;
   height: 100%;
-<<<<<<< HEAD
-}
-=======
 }
 
 .hamburgerBarBox {
@@ -162,4 +153,3 @@
   font-size: 20px;
   margin: 0px;
 }
->>>>>>> b971c589a435c2c78b9efb464fb2383f1019f8e5

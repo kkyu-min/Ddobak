@@ -8,6 +8,7 @@ export const getData = async (key: string) => {
     const value = await localStorage.getItem(key);
     if (value !== null) {
       const validValue = JSON.parse(value);
+      console.log(validValue);
       return validValue;
     }
   } catch (e) {

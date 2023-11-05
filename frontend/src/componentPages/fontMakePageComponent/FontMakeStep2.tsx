@@ -6,6 +6,7 @@ import { resultModalActions } from 'store/resultModalSlice';
 import { useDispatch } from 'react-redux';
 import AlertCustomModal from 'common/modals/alertCustomModal/AlertCustomModal';
 import axios from 'axios';
+import { axiosWithFormData } from 'https/http';
 
 const FontMakeStep2: React.FC = () => {
   const [koreanFiles, setKoreanFiles] = useState<{ src: string; name: string }[]>([]);
@@ -148,19 +149,26 @@ const FontMakeStep2: React.FC = () => {
     if (koreanFiles.length > 0 && englishFiles.length > 0) {
       try {
         const formData = new FormData();
+        console.log(koreanFiles[0].src)
         formData.append('kor_file', koreanFiles[0].src);
         formData.append('eng_file', englishFiles[0].src);
         // 이미지 처리 API 호출
-        const response = await axios.post('https://ddobak.com/api/v1/font/sort', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
+        // const response = await axios.post('https://ddobak.com/api/v1/font/sort', formData, {
+        //   headers: {
+        //     'Content-Type': 'multipart/form-data',
+            
+        //   }
+        // });
+        const response = axiosWithFormData.post("/font/sort", formData).then((r) => {
+          return r
+        }).catch((e) => {
+          throw e
+        })
 
        // 성공적으로 처리되었다면, 결과 이미지 URL을 파싱하여 상태 업데이트
-       if (response.data.success) {
+       if ((await response).data.success) {
         // 이미지 URL을 `$` 기준으로 파싱
-        const imageUrls = response.data.body.split('$').filter((url: string) => url.trim() !== '');
+        const imageUrls = (await response).data.body.split('$').filter((url: string) => url.trim() !== '');
 
         // 예를 들어 첫 번째 이미지로 한국어 파일 미리보기 업데이트
         if (imageUrls.length > 0) {

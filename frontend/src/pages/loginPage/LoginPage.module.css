@@ -45,11 +45,6 @@
 }
 
 ::placeholder {
-<<<<<<< HEAD
-    /* 최신 브라우저 */
-    color: #6d6d6d;
-}
-=======
   /* 최신 브라우저 */
   color: #6d6d6d;
 }
@@ -59,4 +54,3 @@
   color: #d71718;
   font-size: 14px;
 }
->>>>>>> b971c589a435c2c78b9efb464fb2383f1019f8e5
