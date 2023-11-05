@@ -4,6 +4,7 @@ import UploadFile from './fontDetailPageAssets/upload_file.png';
 import { FaRegTimesCircle } from 'react-icons/fa';
 import { resultModalActions } from 'store/resultModalSlice';
 import { useDispatch } from 'react-redux';
+import axios from 'axios';
 
 const FontMakeStep2: React.FC = () => {
   const [koreanFiles, setKoreanFiles] = useState<{ src: string; name: string }[]>([]);
@@ -141,11 +142,49 @@ const FontMakeStep2: React.FC = () => {
   const [isImageStraightened, setIsImageStraightened] = useState(false);
 
   // 이미지 반듯하게 처리
-  const straightenImage = () => {
-    // 이미지를 반듯하게 처리하는 로직 추가
-    setIsImageStraightened(true);
-  };
+  const straightenImage = async () => {
+    if (koreanFiles.length > 0 && englishFiles.length > 0) {
+      try {
+        const formData = new FormData();
+        formData.append('multpartFile', koreanFiles[0].src); // 혹은 englishFiles[0].src
+        formData.append('multpartFile', englishFiles[0].src); // 혹은 englishFiles[0].src
 
+        // 이미지 처리 API 호출
+        const response = await axios.post('/api/image/straighten', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        // 성공적으로 처리되었다면, 결과 이미지 URL을 파싱하여 상태 업데이트
+        if (response.data.success) {
+          // 이미지 URL을 `$` 기준으로 파싱
+          const imageUrls = response.data.body.split('$').filter((url: string) => url.trim() !== '');
+
+          // 예를 들어 첫 번째 이미지로 한국어 파일 미리보기 업데이트
+          if (imageUrls.length > 0) {
+            setKoreanFiles([{ ...koreanFiles[0], src: imageUrls[0] }]);
+            // 여기서 createFilePreview 함수를 호출하여 미리보기 생성 가능
+            createFilePreview({ src: imageUrls[0], name: 'kor_file.png' }); // 파일 이름은 예시임
+          }
+
+          // 만약 영어 파일 미리보기도 업데이트 해야 한다면, 두 번째 URL을 사용
+          if (imageUrls.length > 1) {
+            setEnglishFiles([{ ...englishFiles[0], src: imageUrls[1] }]);
+
+            createFilePreview({ src: imageUrls[0], name: 'eng_file.png' }); // 파일 이름은 예시임
+          }
+
+          setIsImageStraightened(true);
+        } else {
+          alert('이미지를 처리하는데 실패했다.');
+        }
+      } catch (error) {
+        console.error('이미지 처리 중 오류가 발생했다:', error);
+        alert('이미지를 처리하는 중 오류가 발생했다.');
+      }
+    }
+  };
   // 미리보기 모달 가져오기
   const dispatch = useDispatch();
   const showPreviewHandler = () => {
