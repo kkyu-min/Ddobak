@@ -1,6 +1,11 @@
 .container {
+<<<<<<< HEAD
     padding-left: 20px;
     padding-right: 20px;
     padding-top: 50px;
     padding-bottom: 40px;
 }
+=======
+  padding: 40px 100px;
+}
+>>>>>>> b971c589a435c2c78b9efb464fb2383f1019f8e5

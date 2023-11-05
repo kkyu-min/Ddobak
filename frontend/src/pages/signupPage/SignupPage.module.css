@@ -39,6 +39,7 @@
 }
 
 .signupBtn {
+<<<<<<< HEAD
     width: 300px;
     height: 48px;
     background-color: #D71718;
@@ -73,3 +74,50 @@
 .emailCheckBtn:hover {
     background-color: #F66C5C;
 }
+=======
+  width: 300px;
+  height: 48px;
+  background-color: #d71718;
+  color: white;
+  font-size: 17px;
+  font-weight: bold;
+  border: 0px;
+  border-radius: 6.5px;
+  margin-top: 8.5px;
+  margin-bottom: 8.5px;
+  &:hover {
+    cursor: pointer;
+    opacity: 0.7;
+  }
+}
+
+.emailCheckBtn {
+  background-color: #d71718;
+  position: absolute;
+  transform: translate(-105px, 14.5px);
+  border-radius: 6.5px;
+  border: 0px;
+  height: 40px;
+  width: 100px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  &:hover {
+    cursor: pointer;
+    opacity: 0.7;
+  }
+}
+
+.notValidEmail {
+  background-color: #484848;
+  position: absolute;
+  transform: translate(-105px, 14.5px);
+  border-radius: 6.5px;
+  border: 0px;
+  height: 40px;
+  width: 100px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+}
+>>>>>>> b971c589a435c2c78b9efb464fb2383f1019f8e5
