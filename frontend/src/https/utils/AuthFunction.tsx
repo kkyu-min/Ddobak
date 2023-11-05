@@ -1,8 +1,21 @@
-import { axiosWithoutAuth } from 'https/http';
+import { axiosWithoutAuth, axiosWithAuth } from 'https/http';
+
+// formData
+/*
+const aiDiagnosisRequest = {
+      surveyResult: arrayString,
+    };
+
+    const json = JSON.stringify(aiDiagnosisRequest);
+    const jsonBlob = new Blob([json], { type: "application/json" });
+
+    const formData = new FormData();
+    formData.append("aiDiagnosisRequest", jsonBlob);
+*/
 
 // Email Api
 // 이메일 인증번호 발송
-export function userEmailVerifyRequest(email: string): Promise<any> {
+export async function userEmailVerifyRequest(email: string): Promise<any> {
   const data = {
     email: email,
   };
@@ -28,7 +41,7 @@ type EmailCheckData = {
 //     }
 // }
 
-export function userEmailVerifyAPI(data: EmailCheckData): Promise<any> {
+export async function userEmailVerifyAPI(data: EmailCheckData): Promise<any> {
   return axiosWithoutAuth
     .post('/member/email/verify', data)
     .then((r) => {
@@ -45,15 +58,33 @@ type SignupData = {
   nickname: string;
   loginPassword: string;
 };
-export function userSignup(data: SignupData): Promise<any> {
-  return axiosWithoutAuth
-    .post('/member/signup', data)
-    .then((r) => {
-      return r;
-    })
-    .catch((e) => {
-      throw e;
-    });
+export async function userSignup(data: SignupData, profileImg: File | string): Promise<any> {
+  const formData = new FormData();
+
+  // JSON 데이터를 추가합니다.
+  formData.append('signUpRequest', new Blob([JSON.stringify(data)], { type: 'application/json' }));
+
+  // 이미지 파일을 추가합니다.
+  if (profileImg) {
+    formData.append('profileImg', profileImg);
+    return axiosWithoutAuth
+      .post('/member/signup', formData)
+      .then((r) => {
+        return r;
+      })
+      .catch((e) => {
+        throw e;
+      });
+  } else {
+    return axiosWithoutAuth
+      .post('/member/signup', formData)
+      .then((r) => {
+        return r;
+      })
+      .catch((e) => {
+        throw e;
+      });
+  }
 }
 
 /*
@@ -86,4 +117,26 @@ export async function checkToken() {
     return newTestToken;
   }
   return false;
+}
+
+export async function userLogin(data: LoginType): Promise<any> {
+  return axiosWithoutAuth
+    .post('/member/login', data)
+    .then((r) => {
+      return r.data;
+    })
+    .catch((e) => {
+      throw e;
+    });
+}
+
+export async function userLogout(): Promise<any> {
+  return axiosWithAuth
+    .get('/member/logout')
+    .then((r) => {
+      return r.data;
+    })
+    .catch((e) => {
+      throw e;
+    });
 }
