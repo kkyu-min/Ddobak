@@ -6,6 +6,7 @@ import { resultModalActions } from 'store/resultModalSlice';
 import { useDispatch } from 'react-redux';
 import AlertCustomModal from 'common/modals/alertCustomModal/AlertCustomModal';
 import axios from 'axios';
+import { axiosWithAuth, axiosWithoutAuth } from 'https/http';
 
 const FontMakeStep2: React.FC = () => {
   const [koreanFiles, setKoreanFiles] = useState<{ src: string; name: string }[]>([]);
@@ -151,11 +152,10 @@ const FontMakeStep2: React.FC = () => {
         formData.append('kor_file', koreanFiles[0].src);
         formData.append('eng_file', englishFiles[0].src);
         // 이미지 처리 API 호출
-        const response = await axios.post('https://ddobak.com/api/v1/font/sort', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
+        
+        
+        const response = await axiosWithAuth("font/sort", formData).then((r) => console.log(r))
+        .catch((e) => console.error(e))
 
        // 성공적으로 처리되었다면, 결과 이미지 URL을 파싱하여 상태 업데이트
        if (response.data.success) {
