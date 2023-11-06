@@ -67,7 +67,10 @@ axiosWithFormData.interceptors.request.use(
     const accessToken = await getData('accessToken'); // await를 사용하여 토큰 값을 가져옵니다.
     if (accessToken) {
       config.headers['Authorization'] = 'Bearer ' + accessToken;
-    }
+    } 
+    // else {
+    //   console.log('Access token is not available.'); // 토큰이 없다면 로그 출력
+    // }
     return config;
   },
   (error) => {

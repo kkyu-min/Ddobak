@@ -18,7 +18,7 @@ const MainPage: React.FC = () => {
     <main className={classes.container}>
       <MainLargePage><MainPageLargeManuscript /></MainLargePage>
       <MainLargePage><MainPageFontList /></MainLargePage>
-      {/* <MainLargePage><MainPageGuide /></MainLargePage> */}
+      <MainLargePage><MainPageGuide /></MainLargePage>
       <MainFooter>
         <MainFooterBetween>
           <MainFooterBetweenInnerBox>
