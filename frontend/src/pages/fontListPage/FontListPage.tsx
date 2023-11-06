@@ -355,6 +355,6 @@ const getFilteredFonts = () => {
 
         </div>
     </>
-  );
-};
-export default FontListPage;
+  )
+}
+export default FontListPage

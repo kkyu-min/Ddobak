@@ -77,6 +77,6 @@ const FontMakeStep1: React.FC = () => {
         </div>
       </div>
     </>
-  );
-};
-export default FontMakeStep1;
+  )
+}
+export default FontMakeStep1

@@ -22,6 +22,9 @@ const faqs = [
     question: '웹폰트 적용하는 방법이 궁금해요.',
     answer: '웹폰트 코드 복사',
   },
+  { question: "손글씨로 몇 글자를 작성해야 하나요?", answer: "글자 수 답변" },
+  { question: "폰트를 제작하는데 얼마나 걸리나요?", answer: "제작 소요 시간 답변" },
+  { question: "제작이 완료되면 어떻게 알 수 있나요?", answer: "회원가입 시 인증 받으셨던 이메일로 제작 완료 알림을 발송해 드립니다." },
 ];
 
 const FaqPage: React.FC = () => {
@@ -29,10 +32,9 @@ const FaqPage: React.FC = () => {
   const [filteredFaqs, setFilteredFaqs] = useState(faqs);
 
   useEffect(() => {
-    const results = faqs.filter(
-      (faq) =>
-        faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        faq.answer.toLowerCase().includes(searchTerm.toLowerCase()),
+    const results = faqs.filter(faq =>
+      faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      faq.answer.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredFaqs(results);
   }, [searchTerm]);
@@ -48,19 +50,17 @@ const FaqPage: React.FC = () => {
             type="text"
             placeholder="검색"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={e => setSearchTerm(e.target.value)}
           />
           <FaSistrix size={24} color="black" />
         </div>
       </div>
       <div className={classes.containerStyle}>
-        {filteredFaqs.map((faq, index) => (
+      {filteredFaqs.map((faq, index) => (
           <div key={index} className={classes.faqStyle}>
             <div className={classes.qText}>Q. {faq.question}</div>
             <hr />
-            <div className={classes.aText}>
-              <strong>A.</strong> {faq.answer}
-            </div>
+            <div className={classes.aText}><strong>A.</strong> {faq.answer}</div>
           </div>
         ))}
       </div>

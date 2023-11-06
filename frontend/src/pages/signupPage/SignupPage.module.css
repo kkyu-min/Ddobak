@@ -1,41 +1,41 @@
 .container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  position: relative;
-  padding-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+    padding-top: 10px;
 }
 
 .navigator {
-  margin-top: 18px;
-  text-decoration: none;
-  color: black;
-  font-size: 17px;
-  font-weight: 700;
+    margin-top: 18px;
+    text-decoration: none;
+    color: black;
+    font-size: 17px;
+    font-weight: 700;
 }
 
 .passwordIcon {
-  position: absolute;
-  transform: translate(260px, -45px);
-  cursor: pointer;
-  transition: opacity 0.3s ease;
+    position: absolute;
+    transform: translate(260px, -45px);
+    cursor: pointer;
+    transition: opacity 0.3s ease;
 }
 
 .passwordIcon:hover {
-  opacity: 0.6;
+    opacity: 0.6
 }
 
 .profileBox {
-  width: 100px;
-  height: 100px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .cameraTransfrom {
-  transform: translate(30px, 30px);
+    transform: translate(30px, 30px);
 }
 
 .signupBtn {

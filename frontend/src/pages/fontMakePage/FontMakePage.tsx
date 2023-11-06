@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react"
 import classes from './FontMakePage.module.css';
 import FontMakeStep1 from 'componentPages/fontMakePageComponent/FontMakeStep1';
 import FontMakeStep2 from 'componentPages/fontMakePageComponent/FontMakeStep2';
@@ -17,7 +17,7 @@ const FontMakePage: React.FC = () => {
         showPreviewHandler();
       }
     }
-  };
+  }
 
   // 미리보기 모달 가져오기
   const dispatch = useDispatch();
@@ -55,7 +55,7 @@ const FontMakePage: React.FC = () => {
         )}
       </div>
     </>
-  );
-};
+  )
+}
 
 export default FontMakePage;
