@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import classes from './FontListPage.module.css';
 import { FaSistrix, FaAngleDown } from 'react-icons/fa';
 import { PageTitle } from 'common/titleComponents/TitleComponents';
 import FontBoxComponent from './fontListPageComponents/FontBoxComponent';
-import { axiosWithAuth, axiosWithoutAuth } from 'https/http';
+import { axiosWithAuth, axiosWithFormData, axiosWithoutAuth } from 'https/http';
 import { getData } from 'https/http';
 // import MiniManuscript from './fontListPageComponents/MiniManuscript';
 
@@ -35,17 +35,16 @@ const FontListPage: React.FC = () => {
       if (!token) {
         // 토큰 있음
         try {
-          const response = await axiosWithoutAuth.get('/font/list/NoAuth').then((r) => {
-            return r;
-          });
+          const response = await axiosWithoutAuth.get('/font/list/NoAuth')
+          .then((r) => { return r; });
           if (response.data) {
             console.log('API로부터 받은 데이터:', response.data); // 데이터 로깅 추가
             setFonts(response.data.fontResponseList); // 상태 업데이트
           } else {
-            console.log('API 응답에 fonts 프로퍼티가 없습니다.', response.data); // 경고 로그 추가
+            console.log('API 응답에 fonts 프로퍼티가 없습니다.', response.data);
           }
         } catch (error) {
-          console.error('API 호출 에러:', error); // 에러 로깅 개선
+          console.error('API 호출 에러:', error);
         }
       } else {
         fetchFonts();
@@ -63,6 +62,7 @@ const FontListPage: React.FC = () => {
       if (response.data) {
         console.log('API로부터 받은 데이터:', response.data); // 데이터 로깅 추가
         setFonts(response.data.fontResponseList); // 상태 업데이트
+
       } else {
         console.log('API 응답에 fonts 프로퍼티가 없습니다.', response.data); // 경고 로그 추가
       }
@@ -72,8 +72,7 @@ const FontListPage: React.FC = () => {
   };
 
   // 현재 페이지의 폰트 목록을 렌더링
-  const renderFontBoxes = () => {
-    return fonts.map((font) => (
+  const renderFontBoxes = () => {return fonts.map((font) => (
       <FontBoxComponent
         key={font.font_id.toString()}
         id={font.font_id.toString()}
@@ -110,19 +109,67 @@ const FontListPage: React.FC = () => {
     '아이같은',
     '자유로운',
   ];
+  
+  const [checkedOptions, setCheckedOptions] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  const handleCheckboxChange = (option: string) => {
+    setCheckedOptions((prev) =>
+      prev.includes(option) ? prev.filter((o) => o !== option) : [...prev, option],
+    );
+  };
 
   const renderFilterOptions = () => {
     return (
       <div className={classes.filterOptions}>
         {options.map((option, index) => (
           <label key={index}>
-            <input type="checkbox" className={classes.checkbox} />
+            <input
+              type="checkbox"
+              className={classes.checkbox}
+              checked={checkedOptions.includes(option)}
+              onChange={() => handleCheckboxChange(option)}
+            />
             {' ' + option}
           </label>
         ))}
       </div>
     );
   };
+
+// 폰트 데이터를 필터링하는 함수
+const fetchFilteredFonts = useCallback(async () => {
+  try {
+    // 쿼리 파라미터로 선택된 옵션들을 추가
+    const formData = new FormData();
+    // checkedOptions.forEach((option) => {
+    //   queryParams.append('options', option);
+    // });
+    // if (searchTerm) {
+    //   queryParams.append('keyword', searchTerm);
+    // }
+    console.log('선택한 옵션 값:', checkedOptions);
+    // 쿼리 파라미터가 있는 URL 생성
+    const response = await axiosWithFormData.get(`/font/list/NoAuth`, formData).then(r => r);
+
+    if (Array.isArray(response.data.fontResponseList)) {
+      console.log('API로부터 받은 데이터:', response.data.fontResponseList);
+      setFonts(response.data.fontResponseList); // 필터링된 데이터로 상태 업데이트
+    } else {
+      console.error('API 응답이 올바르지 않습니다.', response);
+      // 배열이 아니라면 에러 처리
+      console.error('fontResponseList는 배열이어야 합니다.', response.data);
+      setFonts([]); // 상태를 빈 배열로 초기화하여 map 함수 호출 오류 방지
+    }
+  } catch (error) {
+    console.error('필터링 API 호출 에러:', error);
+  }
+}, [checkedOptions, searchTerm]);
+
+ // 검색어나 체크박스 변경 시 필터링된 폰트 데이터 요청
+useEffect(() => {
+  fetchFilteredFonts();
+}, [fetchFilteredFonts]);
 
   return (
     <>
@@ -135,11 +182,10 @@ const FontListPage: React.FC = () => {
             <input
               type="text"
               placeholder="폰트명, 제작자 검색"
-              // value={searchTerm}
-              // onChange={(e) => {
-              //   setSearchTerm(e.target.value);
-              //   setCurrentPage(1); // 검색시에는 항상 첫 페이지로 리셋
-              // }}
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+            }}
             />
             <FaSistrix size={24} color="black" />
           </div>
@@ -153,11 +199,11 @@ const FontListPage: React.FC = () => {
                 size={22}
                 color="gray"
                 style={{ marginLeft: '4px' }}
-                // className={`${classes.filterIcon} ${showFilterOptions ? classes.filterIconActive : ''
-                //   }`}
+                className={`${classes.filterIcon} ${showFilterOptions ? classes.filterIconActive : ''}`}
               />
             </div>
             {showFilterOptions && renderFilterOptions()}
+            <button onClick={fetchFilteredFonts}>적용</button> 
           </div>
         </div>
         <div className={classes.fontBoxContainer}>{renderFontBoxes()}</div>
