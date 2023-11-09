@@ -112,7 +112,7 @@ const FontListPage: React.FC = () => {
   ];
 
   const [checkedOptions, setCheckedOptions] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   const handleCheckboxChange = (option: string) => {
     setCheckedOptions((prev) =>
@@ -137,14 +137,18 @@ const FontListPage: React.FC = () => {
       </div>
     );
   };
-
+  // search page size
   // 폰트 데이터 필터링
   const fetchFilteredFonts = useCallback(async () => {
     console.log('선택된 필터 옵션:', checkedOptions);
+    console.log('입력한 검색어:', searchTerm);
     try {
-      const params = checkedOptions.length > 0 
-      ? { keywords: checkedOptions.join(',') }  // 선택된 옵션이 있을 경우, 쉼표로 구분된 문자열로 전송
-      : {};  // 선택된 옵션이 없을 경우, params를 비워서 모든 데이터를 요청
+      const params = {
+      search: searchTerm,
+      keywords: checkedOptions.length > 0 
+      ? checkedOptions.join(',')  // 선택된 옵션이 있을 경우, 쉼표로 구분된 문자열로 전송
+      : {}  // 선택된 옵션이 없을 경우, params를 비워서 모든 데이터 요청
+      }
         const response = await axiosWithoutAuth.get('/font/list/NoAuth', { params });
         if (response.data) {
           console.log('폰트 목록:', response.data);
@@ -153,11 +157,15 @@ const FontListPage: React.FC = () => {
       } catch (error) {
         console.error('폰트 목록을 가져오는데 실패했습니다:', error);
       }
-    }, [checkedOptions]);
+    }, [searchTerm, checkedOptions]);
   // 검색어나 체크박스 변경 시 필터링된 폰트 데이터 요청
   useEffect(() => {
-    fetchFilteredFonts();
-  }, [fetchFilteredFonts]);
+    const timer = setTimeout(() => {
+      fetchFilteredFonts();
+    }, 500); // 타이핑을 멈춘 후 500ms 뒤 검색 수행
+  
+    return () => clearTimeout(timer); // 클린업 함수로 타이머를 제거합니다.
+  }, [searchTerm, fetchFilteredFonts]); 
 
   return (
     <>
