@@ -5,9 +5,8 @@ import { PageTitle } from 'common/titleComponents/TitleComponents';
 import FontBoxComponent from './fontListPageComponents/FontBoxComponent';
 import { axiosWithAuth, axiosWithoutAuth } from 'https/http';
 import { getData } from 'https/http';
-import PageMiniManuscript from './fontListPageComponents/PageMiniManuscript';
-// const ITEMS_PER_PAGE = 12; // 한 페이지에 표시할 아이템 수
-const TOTAL_PAGES = 2; // 총 페이지 수, 실제로는 서버로부터 받아와야 할 수 있습니다.
+// import PageMiniManuscript from './fontListPageComponents/PageMiniManuscript';
+
 // API로부터 받아올 데이터 타입 정의
 // type FontList = {
 //   fontCount: number;
@@ -56,7 +55,7 @@ const FontListPage: React.FC = () => {
         return r;
       });
       if (response.data) {
-        console.log('API로부터 받은 폰트 목록:', response.data); 
+        console.log('API로부터 받은 폰트 목록:', response.data);
         setFonts(response.data.fontResponseList); // 상태 업데이트
 
       } else {
@@ -79,38 +78,6 @@ const FontListPage: React.FC = () => {
       />
     ));
   };
-  // 페이지 번호 변경 핸들러
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-  };
-
-  // 페이지 번호 버튼 렌더링 함수
-  const renderPaginationButtons = () => {
-    const pages = Array.from({ length: TOTAL_PAGES }, (_, index) => index);
-    return pages.map((pageNumber) => (
-      <button
-        key={pageNumber}
-        onClick={() => handlePageChange(pageNumber)}
-        className={pageNumber === currentPage ? classes.active : ''}
-      >
-        {pageNumber + 1}
-      </button>
-    ));
-  };
-
-  // // 페이지 번호 생성 함수
-  const renderPagination = () => {
-    // const pageCount = Math.ceil(setFonts().length / 12);
-    // const pages = Array.from({ length: pageCount }, (_, index) => index + 1);
-
-    return (
-      <PageMiniManuscript
-        // pages={pages}
-        // currentPage={currentPage}
-        // onPageChange={setCurrentPage}
-      />
-    );
-  };
 
   const options = [
     '단정한',
@@ -127,9 +94,6 @@ const FontListPage: React.FC = () => {
   const [showFilterOptions, setShowFilterOptions] = useState(false);
   const [checkedOptions, setCheckedOptions] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
-
-  const [totalPages, setTotalPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
 
   const handleCheckboxChange = (option: string) => {
     setCheckedOptions((prev) =>
@@ -154,15 +118,19 @@ const FontListPage: React.FC = () => {
       </div>
     );
   };
-  // page size
-  // 폰트 데이터 필터링
+
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
+  // 폰트 필터링
   const fetchFilteredFonts = useCallback(async () => {
     // console.log('선택된 필터 옵션:', checkedOptions);
     // console.log('입력한 검색어:', searchTerm);
-    console.log('현재 페이지:', currentPage);
+    // console.log('전체 폰트 수:', totalFonts);
+    console.log('페이지 인덱스 번호:', currentPage);
+    console.log('현재 페이지 번호:', currentPage + 1);
     try {
       const params = {
-        page: currentPage, 
+        page: currentPage,
         search: searchTerm,
         keywords: checkedOptions.length > 0
           ? checkedOptions.join(',')  // 선택된 옵션이 있을 경우, 쉼표로 구분된 문자열로 전송
@@ -171,14 +139,35 @@ const FontListPage: React.FC = () => {
       const response = await axiosWithoutAuth.get('/font/list/NoAuth', { params });
       if (response.data) {
         console.log('필터링 된 폰트 목록:', response.data);
-        setFonts(response.data.fontResponseList)
-
-        
+        console.log('폰트 개수:', response.data.fontCount);
+        setFonts(response.data.fontResponseList);
+        const totalFonts = response.data.fontCount; // 서버로부터 받은 전체 폰트 수
+        const newTotalPages = Math.ceil(totalFonts / response.data.fontResponseList.length); // 전체 페이지 수 계산
+        setTotalPages(newTotalPages); // 상태 업데이트
       }
     } catch (error) {
       console.error('폰트 목록을 가져오는데 실패했습니다:', error);
     }
   }, [currentPage, searchTerm, checkedOptions]);
+
+  // 페이지 번호 변경 핸들러
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
+ // 페이지 번호 버튼 렌더링 함수
+const renderPaginationButtons = () => {
+  const pages = Array.from({ length: totalPages }, (_, index) => index);
+  return pages.map((pageNumber) => (
+    <button
+      key={pageNumber}
+      onClick={() => handlePageChange(pageNumber)}
+      className={pageNumber === currentPage ? classes.active : ''}
+    >
+      {pageNumber + 1}
+    </button>
+  ));
+};
 
   // 검색어나 옵션 변경 시 필터링된 데이터 요청
   useEffect(() => {
@@ -187,7 +176,7 @@ const FontListPage: React.FC = () => {
     }, 500); // 타이핑을 멈춘 후 500ms 뒤 검색 수행
 
     return () => clearTimeout(timer); // 클린업 함수로 타이머를 제거
-  }, [currentPage, searchTerm, fetchFilteredFonts]); // 의존성 배열 추가
+  }, [currentPage, searchTerm, checkedOptions, fetchFilteredFonts]); // 의존성 배열 추가
 
   return (
     <>
@@ -223,8 +212,8 @@ const FontListPage: React.FC = () => {
         </div>
         <div className={classes.fontBoxContainer}>{renderFontBoxes()}</div>
         <div className={classes.paginationContainer}>
-        {renderPaginationButtons()}
-          {/* {renderPagination()} */}
+          {/* 페이지네이션 자리 */}
+          {renderPaginationButtons()}
         </div>
       </div>
     </>
