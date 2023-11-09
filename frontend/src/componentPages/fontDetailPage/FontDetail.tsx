@@ -141,6 +141,10 @@ const FontDetail: React.FC = () => {
 
   const openReviewModal = () => {
     dispatch(reviewModalActions.toggle());
+    // id를 넘겨준다.
+    if (fontId) {
+      dispatch(reviewModalActions.register({ fontId: fontId }));
+    }
   };
 
   window.scrollTo({ left: 0, top: 0 });
@@ -255,7 +259,7 @@ const FontDetail: React.FC = () => {
       <ReviewModal />
       <hr />
       <br />
-      <FontUserReview />
+      {fontId ? <FontUserReview fontId={fontId} /> : <></>}
     </>
   );
 };
