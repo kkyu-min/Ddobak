@@ -138,17 +138,13 @@ const FontListPage: React.FC = () => {
     );
   };
 
-  // 폰트 데이터를 필터링하는 함수
+  // 폰트 데이터 필터링
   const fetchFilteredFonts = useCallback(async () => {
-    if (checkedOptions.length === 0) {
-      setFonts([]); // 선택된 옵션이 없으면 폰트 리스트를 비웁니다.
-      return;
-    }
     console.log('선택된 필터 옵션:', checkedOptions);
     try {
-      const params = {
-        keywords: checkedOptions.join(',')
-      };
+      const params = checkedOptions.length > 0 
+      ? { keywords: checkedOptions.join(',') }  // 선택된 옵션이 있을 경우, 쉼표로 구분된 문자열로 전송
+      : {};  // 선택된 옵션이 없을 경우, params를 비워서 모든 데이터를 요청
         const response = await axiosWithoutAuth.get('/font/list/NoAuth', { params });
         if (response.data) {
           console.log('폰트 목록:', response.data);
