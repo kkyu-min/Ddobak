@@ -27,6 +27,7 @@ type Font = {
   producerName: string;
   viewCount: bigint;
   fontName: string;
+  fontPrice: bigint;
 };
 
 const FontDetail: React.FC = () => {
@@ -148,6 +149,7 @@ const FontDetail: React.FC = () => {
     <>
       <div className={classes.topContainer}>
         {/* 폰트 찜 책갈피 */}
+        <div className={classes.topLeft}>
         <div className={classes.dibContainer}>
           <div className={classes.dibCount}>{dibCount}</div>
           {dibCheck ? (
@@ -157,6 +159,9 @@ const FontDetail: React.FC = () => {
           )}
         </div>
         <div className={classes.title}>{fontDetail ? fontDetail.fontName : ''}</div>
+        </div>
+        <div><span className={classes.price}><>{fontDetail && fontDetail.fontPrice > 0 ? `${fontDetail.fontPrice.toLocaleString()} P` : '무료'} </></span></div>
+
       </div>
       <div className={classes.subContainer}>
         <div className={classes.makerContainer}>
@@ -254,4 +259,5 @@ const FontDetail: React.FC = () => {
     </>
   );
 };
+
 export default FontDetail;

@@ -3,7 +3,7 @@ import classes from './FontListPage.module.css';
 import { FaSistrix, FaAngleDown } from 'react-icons/fa';
 import { PageTitle } from 'common/titleComponents/TitleComponents';
 import FontBoxComponent from './fontListPageComponents/FontBoxComponent';
-import { axiosWithAuth, axiosWithFormData, axiosWithoutAuth } from 'https/http';
+import { axiosWithAuth, axiosWithoutAuth } from 'https/http';
 import { getData } from 'https/http';
 // import MiniManuscript from './fontListPageComponents/MiniManuscript';
 
@@ -36,7 +36,7 @@ const FontListPage: React.FC = () => {
         // 토큰 있음
         try {
           const response = await axiosWithoutAuth.get('/font/list/NoAuth')
-          .then((r) => { return r; });
+            .then((r) => { return r; });
           if (response.data) {
             console.log('API로부터 받은 데이터:', response.data); // 데이터 로깅 추가
             setFonts(response.data.fontResponseList); // 상태 업데이트
@@ -72,7 +72,8 @@ const FontListPage: React.FC = () => {
   };
 
   // 현재 페이지의 폰트 목록을 렌더링
-  const renderFontBoxes = () => {return fonts.map((font) => (
+  const renderFontBoxes = () => {
+    return fonts.map((font) => (
       <FontBoxComponent
         key={font.font_id.toString()}
         id={font.font_id.toString()}
@@ -109,10 +110,10 @@ const FontListPage: React.FC = () => {
     '아이같은',
     '자유로운',
   ];
-  
+
   const [checkedOptions, setCheckedOptions] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  
+
   const handleCheckboxChange = (option: string) => {
     setCheckedOptions((prev) =>
       prev.includes(option) ? prev.filter((o) => o !== option) : [...prev, option],
@@ -137,39 +138,30 @@ const FontListPage: React.FC = () => {
     );
   };
 
-// 폰트 데이터를 필터링하는 함수
-const fetchFilteredFonts = useCallback(async () => {
-  try {
-    // 쿼리 파라미터로 선택된 옵션들을 추가
-    const formData = new FormData();
-    // checkedOptions.forEach((option) => {
-    //   queryParams.append('options', option);
-    // });
-    // if (searchTerm) {
-    //   queryParams.append('keyword', searchTerm);
-    // }
-    console.log('선택한 옵션 값:', checkedOptions);
-    // 쿼리 파라미터가 있는 URL 생성
-    const response = await axiosWithFormData.get(`/font/list/NoAuth`, formData).then(r => r);
-
-    if (Array.isArray(response.data.fontResponseList)) {
-      console.log('API로부터 받은 데이터:', response.data.fontResponseList);
-      setFonts(response.data.fontResponseList); // 필터링된 데이터로 상태 업데이트
-    } else {
-      console.error('API 응답이 올바르지 않습니다.', response);
-      // 배열이 아니라면 에러 처리
-      console.error('fontResponseList는 배열이어야 합니다.', response.data);
-      setFonts([]); // 상태를 빈 배열로 초기화하여 map 함수 호출 오류 방지
+  // 폰트 데이터를 필터링하는 함수
+  const fetchFilteredFonts = useCallback(async () => {
+    if (checkedOptions.length === 0) {
+      setFonts([]); // 선택된 옵션이 없으면 폰트 리스트를 비웁니다.
+      return;
     }
-  } catch (error) {
-    console.error('필터링 API 호출 에러:', error);
-  }
-}, [checkedOptions, searchTerm]);
-
- // 검색어나 체크박스 변경 시 필터링된 폰트 데이터 요청
-useEffect(() => {
-  fetchFilteredFonts();
-}, [fetchFilteredFonts]);
+    console.log('선택된 필터 옵션:', checkedOptions);
+    try {
+      const params = {
+        keywords: checkedOptions.join(',')
+      };
+        const response = await axiosWithoutAuth.get('/font/list/NoAuth', { params });
+        if (response.data) {
+          console.log('폰트 목록:', response.data);
+          setFonts(response.data.fontResponseList)
+        }
+      } catch (error) {
+        console.error('폰트 목록을 가져오는데 실패했습니다:', error);
+      }
+    }, [checkedOptions]);
+  // 검색어나 체크박스 변경 시 필터링된 폰트 데이터 요청
+  useEffect(() => {
+    fetchFilteredFonts();
+  }, [fetchFilteredFonts]);
 
   return (
     <>
@@ -182,10 +174,10 @@ useEffect(() => {
             <input
               type="text"
               placeholder="폰트명, 제작자 검색"
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-            }}
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+              }}
             />
             <FaSistrix size={24} color="black" />
           </div>
@@ -203,7 +195,6 @@ useEffect(() => {
               />
             </div>
             {showFilterOptions && renderFilterOptions()}
-            <button onClick={fetchFilteredFonts}>적용</button> 
           </div>
         </div>
         <div className={classes.fontBoxContainer}>{renderFontBoxes()}</div>
